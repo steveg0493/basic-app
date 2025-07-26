@@ -1,4 +1,4 @@
-import PostgreSQL from "$lib/common/db_postgresql";
+import Db from "$lib/common/db_postgresql";
 
 interface IDepartment {
   department_id: number;
@@ -22,7 +22,7 @@ export const Department = () => {
     getAll: async (): Promise<Array<IDepartment>> => {
       const results: IDepartment[] = [];
       const sql = `select * from data.department order by department_name`;
-      const response = await PostgreSQL().query(sql);
+      const response = await Db().query(sql);
       for (const row of response.rows) {
         const record = api.generateObject(row);
         results.push(record);
@@ -31,7 +31,7 @@ export const Department = () => {
     },
     getSingle: async (id: number): Promise<IDepartment | void> => {
       const sql = `select * from data.department where department_id = $1 `;
-      const response = await PostgreSQL().query(sql, [id]);
+      const response = await Db().query(sql, [id]);
       for (const row of response.rows) {
         const record = api.generateObject(row);
         return record;
@@ -44,7 +44,7 @@ export const Department = () => {
         return { error: "Please provide a department name" };
       }
       const sql = `update data.department set department_name = $1 where department_id = $2 returning *`;
-      const response = await PostgreSQL().query(sql, [
+      const response = await Db().query(sql, [
         record.department_name,
         record.department_id,
       ]);
@@ -61,7 +61,7 @@ export const Department = () => {
         return { error: "Please provide a department name" };
       }
       const sql = `insert into data.department (department_name) values ($1) returning *`;
-      const response = await PostgreSQL().query(sql, [record.department_name]);
+      const response = await Db().query(sql, [record.department_name]);
 
       if (!response.rowCount) {
         throw new Error("Unable to update record");
@@ -69,10 +69,9 @@ export const Department = () => {
       return api.generateObject(response.rows[0]);
     },
     delete: async (id: number): Promise<void> => {
-      await PostgreSQL().query(
-        `delete from data.department where department_id = $1`,
-        [id]
-      );
+      await Db().query(`delete from data.department where department_id = $1`, [
+        id,
+      ]);
     },
   };
   return api;
