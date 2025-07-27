@@ -1,4 +1,4 @@
-import Db, { SQL_TYPES } from "$lib/common/db_mssql";
+import Db, { SQL_TYPES, type QueryParamArray } from "$lib/common/db_mssql";
 
 interface IDepartment {
   department_id: number;
@@ -23,7 +23,7 @@ export const Department = () => {
       const results: IDepartment[] = [];
       const sql = `select * from data.department order by department_name`;
       const response = await Db().query(sql);
-      for (const row of response.rows) {
+      for (const row of response) {
         const record = api.generateObject(row);
         results.push(record);
       }
@@ -39,7 +39,7 @@ export const Department = () => {
           value: id,
         },
       ]);
-      for (const row of response.rows) {
+      for (const row of response) {
         const record = api.generateObject(row);
         return record;
       }
@@ -69,10 +69,10 @@ export const Department = () => {
         },
       ]);
 
-      if (!response.rowCount) {
+      if (!response || response.length === 0) {
         throw new Error("Unable to update record");
       }
-      return api.generateObject(response.rows[0]);
+      return api.generateObject(response[0]);
     },
     insert: async (
       record: IDepartment
