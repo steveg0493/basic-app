@@ -80,15 +80,20 @@ export const Department = () => {
       if (record.department_name.trim() === "") {
         return { error: "Please provide a department name" };
       }
-      const sql = `insert into data.department (department_name) values (@department_name) output inserted.*`;
-      const response = await Db().query(sql, [
+      const sql = `insert into data.department 
+      (department_name) 
+      output inserted.*
+      values (@department_name)`;
+
+      const params: QueryParamArray = [
         {
           direction: "input",
           name: "department_name",
           type: SQL_TYPES.VarChar(255),
           value: record.department_name,
         },
-      ]);
+      ];
+      const response = await Db().query(sql, params);
 
       if (!response || response.length === 0) {
         throw new Error("Unable to update record");
