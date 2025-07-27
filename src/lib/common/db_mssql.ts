@@ -1,5 +1,5 @@
-import * as sql from "mssql";
-import { ConnectionPool, PreparedStatement } from "mssql";
+import sql from "mssql";
+import type { ConnectionPool as ConnectionPoolType } from "mssql";
 
 import {
   DB_USER,
@@ -53,7 +53,7 @@ export type QueryParamArray = QueryParam[];
 
 const MSSQL = () => {
   const api = {
-    checkConnection: async (): Promise<ConnectionPool> => {
+    checkConnection: async (): Promise<ConnectionPoolType> => {
       return await (await DBInstance.getInstance()).getContext();
     },
     query: async (
@@ -64,7 +64,7 @@ const MSSQL = () => {
       const dbContext = await (await DBInstance.getInstance()).getContext();
       if (dbContext) {
         // Create a prepared statement
-        const ps = new PreparedStatement(dbContext);
+        const ps = new sql.PreparedStatement(dbContext);
         // Add parameter definitions to the prepared statement
         params.forEach((param, i) => {
           if (param.direction === "input") {
@@ -98,7 +98,7 @@ export default MSSQL;
 
 // Singleton pattern - used to connect to the database ONCE throughout the entire life of the app
 export class DBInstance {
-  private static dbContext: ConnectionPool;
+  private static dbContext: ConnectionPoolType;
   private static instance: DBInstance;
   private async initialize() {
     try {
@@ -107,6 +107,11 @@ export class DBInstance {
         password: DB_PASSWORD,
         server: DB_SERVER,
         database: DB_DATABASE,
+        options: {
+          encrypt: true,
+          trustServerCertificate: true,
+          enableArithAbort: true,
+        },
       });
     } catch (err) {
       console.log(err);
@@ -120,7 +125,7 @@ export class DBInstance {
     }
     return DBInstance.instance;
   };
-  public getContext = async (): Promise<ConnectionPool> => {
+  public getContext = async (): Promise<ConnectionPoolType> => {
     return DBInstance.dbContext;
   };
 }
