@@ -1,4 +1,4 @@
-import Db from "$lib/common/db_postgresql";
+import Db, { SQL_TYPES } from "$lib/common/db_mssql";
 
 interface IDepartment {
   department_id: number;
@@ -30,8 +30,15 @@ export const Department = () => {
       return results;
     },
     getSingle: async (id: number): Promise<IDepartment | void> => {
-      const sql = `select * from data.department where department_id = $1 `;
-      const response = await Db().query(sql, [id]);
+      const sql = `select * from data.department where department_id = @department_id `;
+      const response = await Db().query(sql, [
+        {
+          direction: "input",
+          name: "department_id",
+          type: SQL_TYPES.Int,
+          value: id,
+        },
+      ]);
       for (const row of response.rows) {
         const record = api.generateObject(row);
         return record;
@@ -43,10 +50,23 @@ export const Department = () => {
       if (record.department_name.trim() === "") {
         return { error: "Please provide a department name" };
       }
-      const sql = `update data.department set department_name = $1 where department_id = $2 returning *`;
+      const sql = `update data.department 
+      set department_name = @department_name 
+      output inserted.*
+      where department_id = @department_id`;
       const response = await Db().query(sql, [
-        record.department_name,
-        record.department_id,
+        {
+          direction: "input",
+          name: "department_name",
+          type: SQL_TYPES.VarChar(255),
+          value: record.department_name,
+        },
+        {
+          direction: "input",
+          name: "department_id",
+          type: SQL_TYPES.Int,
+          value: record.department_id,
+        },
       ]);
 
       if (!response.rowCount) {
@@ -60,8 +80,15 @@ export const Department = () => {
       if (record.department_name.trim() === "") {
         return { error: "Please provide a department name" };
       }
-      const sql = `insert into data.department (department_name) values ($1) returning *`;
-      const response = await Db().query(sql, [record.department_name]);
+      const sql = `insert into data.department (department_name) values (@department_name) output inserted.*`;
+      const response = await Db().query(sql, [
+        {
+          direction: "input",
+          name: "department_name",
+          type: SQL_TYPES.VarChar(255),
+          value: record.department_name,
+        },
+      ]);
 
       if (!response.rowCount) {
         throw new Error("Unable to update record");
@@ -69,9 +96,17 @@ export const Department = () => {
       return api.generateObject(response.rows[0]);
     },
     delete: async (id: number): Promise<void> => {
-      await Db().query(`delete from data.department where department_id = $1`, [
-        id,
-      ]);
+      await Db().query(
+        `delete from data.department where department_id = @department_id`,
+        [
+          {
+            direction: "input",
+            name: "department_id",
+            type: SQL_TYPES.Int,
+            value: id,
+          },
+        ]
+      );
     },
   };
   return api;
