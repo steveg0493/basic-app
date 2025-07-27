@@ -90,10 +90,10 @@ export const Department = () => {
         },
       ]);
 
-      if (!response.rowCount) {
+      if (!response || response.length === 0) {
         throw new Error("Unable to update record");
       }
-      return api.generateObject(response.rows[0]);
+      return api.generateObject(response[0]);
     },
     delete: async (id: number): Promise<void> => {
       await Db().query(
