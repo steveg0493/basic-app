@@ -79,6 +79,7 @@ const MSSQL = () => {
         }));
         // Prepare the statement
         await ps.prepare(sqlText);
+
         // Execute the statement
         try {
           const result = await ps.execute(paramValues);
@@ -86,7 +87,8 @@ const MSSQL = () => {
           return result.recordset;
         } catch (err) {
           console.log(err);
-          throw new Error("Unable to execute statement");
+          // throw new Error("Unable to execute statement");
+          return null;
         }
       }
     },
