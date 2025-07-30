@@ -15,7 +15,6 @@ describe("query", async () => {
       .request()
       .input("department_name", SQL_TYPES.VarChar(255), "Test")
       .query(sqlText);
-    console.log(result);
     department_id = result.recordset[0].department_id;
     department_name = result.recordset[0].department_name;
     expect(result.recordset[0].department_name).toBe("Test");
@@ -29,7 +28,6 @@ describe("query", async () => {
       .request()
       .input("department_id", SQL_TYPES.Int, department_id)
       .query(sqlText);
-    console.log(result);
     expect(result.recordset[0].department_id).toBe(department_id);
   });
 
@@ -41,7 +39,6 @@ describe("query", async () => {
       .request()
       .input("department_name", SQL_TYPES.VarChar(255), department_name)
       .query(sqlText);
-    console.log(result);
     expect(result.recordset[0].department_name).toBe(department_name);
   });
 
@@ -54,7 +51,6 @@ describe("query", async () => {
       .input("department_name", SQL_TYPES.VarChar(255), "Test123")
       .input("department_id", SQL_TYPES.Int, department_id)
       .query(sqlText);
-    console.log(result);
     expect(result.recordset[0].department_name).toBe("Test123");
   });
 

@@ -109,7 +109,6 @@ describe("SqlBuilder", () => {
         .from("users")
         .where("deleted_at", "IS NULL", "")
         .build();
-      console.log(`[${query}]`);
       expect(query).toBe("SELECT id, name FROM users WHERE deleted_at IS NULL");
     });
 
