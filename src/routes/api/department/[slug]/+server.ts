@@ -1,54 +1,65 @@
-import { Department, type IDepartment } from '$lib/server/department.js'
-import { json } from '@sveltejs/kit'
+import { json } from "@sveltejs/kit";
+import { db } from "$lib/common/db.server";
 
-export async function GET({params}) {
-    const department_id = params.slug
+export async function GET({ params }) {
+  const department_id = params.slug;
 
-    let department = await Department().getSingle(Number(department_id))
+  let department = await db.department.findUnique({
+    where: {
+      department_id: Number(department_id),
+    },
+  });
 
-    if(!department){
-        department = {
-            department_id: 0,
-            department_name: ''
-        }
-    }
+  if (!department) {
+    department = {
+      department_id: 0,
+      department_name: "",
+    };
+  }
 
-    return json({department})
+  return json({ department });
 }
 
-export async function POST({request}) {
-    const data = await request.json()
+export async function POST({ request }) {
+  const data = await request.json();
 
-    const department: IDepartment = {
-        department_id: 0,
-        department_name: data.department_name,
-    }
-    const result = await Department().insert(department)
+  const result = await db.department.create({
+    data: {
+      department_name: data.department_name,
+    },
+  });
 
-    if('error' in result){
-        return json({status:400, message:result.error})
-    }
+  if ("error" in result) {
+    return json({ status: 400, message: result.error });
+  }
 
-    return json({status:200})
+  return json({ status: 200 });
 }
 
-export async function PUT({request}) {
-    const data = await request.json()
+export async function PUT({ request }) {
+  const data = await request.json();
 
-    const department: IDepartment = {
-        department_id: data.department_id,
-        department_name: data.department_name,
-    }
-    const result = await Department().update(department)
+  const result = await db.department.update({
+    where: {
+      department_id: data.department_id,
+    },
+    data: {
+      department_name: data.department_name,
+    },
+  });
 
-    if('error' in result){
-        return json({status:400, message:result.error})
-    }
+  if ("error" in result) {
+    return json({ status: 400, message: result.error });
+  }
 
-    return json({status:200})
+  return json({ status: 200 });
 }
 
-export async function DELETE({params}) {
-    await Department().delete(Number(params.slug))
-    return json({status:200})
+export async function DELETE({ params }) {
+  await db.department.delete({
+    where: {
+      department_id: Number(params.slug),
+    },
+  });
+  return json({ status: 200 });
 }
