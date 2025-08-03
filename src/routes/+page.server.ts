@@ -1,4 +1,4 @@
-import { db } from "$lib/common/db.server";
+import { db } from "$lib/db.server";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async () => {

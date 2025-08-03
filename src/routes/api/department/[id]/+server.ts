@@ -1,10 +1,11 @@
 import { json } from "@sveltejs/kit";
-import { db } from "$lib/common/db.server";
+import { db } from "$lib/db.server";
+import type { Department } from "$lib/Department";
 
 export async function GET({ params }) {
-  const department_id = params.slug;
+  const department_id = params.id;
 
-  let department = await db.department.findUnique({
+  let department: Department | null = await db.department.findUnique({
     where: {
       department_id: Number(department_id),
     },
@@ -23,17 +24,19 @@ export async function GET({ params }) {
 export async function POST({ request }) {
   const data = await request.json();
 
-  const result = await db.department.create({
+  const result: Department = await db.department.create({
     data: {
       department_name: data.department_name,
     },
   });
 
+  console.log(result);
+
   if ("error" in result) {
     return json({ status: 400, message: result.error });
   }
 
-  return json({ status: 200 });
+  return json({ status: 200, department: result });
 }
 
 export async function PUT({ request }) {
@@ -58,7 +61,7 @@ export async function PUT({ request }) {
 export async function DELETE({ params }) {
   await db.department.delete({
     where: {
-      department_id: Number(params.slug),
+      department_id: Number(params.id),
     },
   });
   return json({ status: 200 });

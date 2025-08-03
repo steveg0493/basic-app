@@ -1,16 +1,16 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
     import { page } from '$app/state';
-    import type { IDepartment } from '$lib/server/department';
+    import type { Department } from '$lib/types/Department';
     import { onMount } from 'svelte';
 
-    let department: IDepartment = {
+    let department: Department = {
         department_id: 0,
         department_name: ''
     }
 
     onMount(async ()=>{
-        const response = await fetch('/api/department/'+page.params.slug)
+        const response = await fetch('/api/department/'+page.params.id)
         try {
             const json = await response.json()
             department = json.department
@@ -28,7 +28,7 @@
             if(department.department_id === 0){
                 method = 'POST'
             }
-            const response = await fetch('/api/department/'+page.params.slug, {
+            const response = await fetch('/api/department/'+page.params.id, {
                 method:method,
                 headers: {
                     'Content-Type':'application/json',
@@ -56,7 +56,7 @@
 
             const formData = JSON.stringify(department)
             const method = 'DELETE'
-            const response = await fetch('/api/department/'+page.params.slug, {
+            const response = await fetch('/api/department/'+page.params.id, {
                 method:method,
                 headers: {
                     'Content-Type':'application/json',
