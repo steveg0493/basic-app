@@ -1,0 +1,7 @@
+{
+  "version": "1.0",
+  "description": "Chrome DevTools configuration for SvelteKit app",
+  "devtools": {
+    "enabled": true
+  }
+}
