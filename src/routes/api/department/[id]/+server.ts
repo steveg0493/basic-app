@@ -1,6 +1,6 @@
 import { json } from "@sveltejs/kit";
 import { db } from "$lib/db.server";
-import type { Department } from "$lib/Department";
+import type { Department } from "$lib/types/Department";
 
 export async function GET({ params }) {
   const department_id = params.id;
