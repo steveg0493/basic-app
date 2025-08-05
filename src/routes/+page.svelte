@@ -1,11 +1,11 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import type { IDepartment } from '$lib/server/department.js';
+    import type { Department } from '$lib/types/Department';
 
     let {data} = $props()
 
     let searchTerm = $state('')
-    let filteredResults: IDepartment[] = $state([])
+    let filteredResults: Department[] = $state([])
     $effect(()=>{
         if(searchTerm.trim() !== ''){
             filteredResults = data.departments.filter((iteration)=>iteration.department_name.toLowerCase().includes(searchTerm.toLowerCase()))
