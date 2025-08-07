@@ -1,4 +1,4 @@
-import { db } from "$lib/common/db";
+import { db } from "$lib/db/db";
 import type { PageServerLoad } from "./$types";
 import { DepartmentTable } from "$lib/db/schema";
 import { asc } from "drizzle-orm";

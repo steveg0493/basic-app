@@ -1,4 +1,4 @@
-import { db } from "$lib/common/db";
+import { db } from "$lib/db/db";
 import { DepartmentTable } from "$lib/db/schema";
 import type { Department } from "$lib/common/types/Department";
 import { json } from "@sveltejs/kit";
