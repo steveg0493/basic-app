@@ -13,7 +13,13 @@ export async function GET({ params }) {
     .where(eq(DepartmentTable.department_id, department_id))
     .limit(1);
   console.log(department);
-  return json({ department: department[0] });
+  if (department.length > 0) {
+    return json({ department: department[0] });
+  } else {
+    return json({
+      department: { department_id: 0, department_name: "" },
+    });
+  }
 }
 
 export async function POST({ request }) {
